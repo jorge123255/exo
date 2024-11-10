@@ -59,6 +59,19 @@ print_yellow_exo()
 system_info = get_system_info()
 print(f"Detected system: {system_info}")
 
+# Additional GPU check
+try:
+    import tensorflow as tf
+    gpu_devices = tf.config.list_physical_devices('GPU')
+    gpu_count = len(gpu_devices)
+    print(f"TensorFlow detected GPUs: {gpu_count}")
+    if gpu_count > 0:
+        print("GPU devices found:")
+        for gpu in gpu_devices:
+            print(f" - {gpu}")
+except ImportError:
+    print("TensorFlow not available for GPU check.")
+
 shard_downloader: ShardDownloader = HFShardDownloader(quick_check=args.download_quick_check,
                                                       max_parallel_downloads=args.max_parallel_downloads) if args.inference_engine != "dummy" else NoopShardDownloader()
 inference_engine_name = args.inference_engine or ("mlx" if system_info == "Apple Silicon Mac" else "tinygrad")
@@ -82,6 +95,7 @@ if DEBUG >= 0:
   for chatgpt_api_endpoint in chatgpt_api_endpoints:
     print(f" - {terminal_link(chatgpt_api_endpoint)}")
 
+# Discovery setup
 if args.discovery_module == "udp":
   discovery = UDPDiscovery(
     args.node_id,
