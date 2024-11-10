@@ -56,11 +56,11 @@ def build_transformer(model_path: Path, shard: Shard, model_size="8B", devices=N
   return model
 
 class TinygradDynamicShardInferenceEngine(InferenceEngine):
-  def __init__(self, shard_downloader: ShardDownloader, devices=None):
-    self.shard = None
-    self.shard_downloader = shard_downloader
-    self.executor = ThreadPoolExecutor(max_workers=1)
-    self.devices = devices or [0]  # Default to GPU 0 if no devices are provided
+    def __init__(self, shard_downloader: ShardDownloader, devices=None):
+        self.shard = None
+        self.shard_downloader = shard_downloader
+        self.executor = ThreadPoolExecutor(max_workers=1)
+        self.devices = devices or [0]  # Default to GPU 0 if no devices are provided
 
   async def infer_prompt(self, request_id: str, shard: Shard, prompt: str, image_str: Optional[str] = None, inference_state: Optional[str] = None) -> Tuple[np.ndarray, str, bool]:
     await self.ensure_shard(shard)
