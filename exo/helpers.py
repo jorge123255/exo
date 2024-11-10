@@ -23,15 +23,15 @@ exo_text = r"""
 
 
 def get_system_info():
-  if psutil.MACOS:
-    if platform.machine() == "arm64":
-      return "Apple Silicon Mac"
-    if platform.machine() in ["x86_64", "i386"]:
-      return "Intel Mac"
-    return "Unknown Mac architecture"
-  if psutil.LINUX:
-    return "Linux"
-  return "Non-Mac, non-Linux system"
+    if psutil.MACOS:
+        if platform.machine() == "arm64":
+            return "Apple Silicon Mac"
+    if psutil.LINUX:
+        # Check for GPU availability
+        import torch  # Assuming PyTorch is installed
+        gpu_count = torch.cuda.device_count() if torch.cuda.is_available() else 0
+        return f"Linux with {gpu_count} GPUs" if gpu_count > 0 else "Linux without GPU"
+    return "Non-Mac, non-Linux system"
 
 
 def find_available_port(host: str = "", min_port: int = 49152, max_port: int = 65535) -> int:
